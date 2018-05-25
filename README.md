@@ -23,6 +23,7 @@ Sproject是一個縮網址專案, 使用者可透過瀏覽器或是curl呼叫API
   - 程式語言 : Java
   - web server : Tomcat-7.0.86
   - database : SQLite
+    - schema : CREATE TABLE UrlMapping(url text, surl text, PRIMARY KEY(url));
   - third party jar
     - json.jar
     - servlet-api.jar
