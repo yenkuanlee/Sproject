@@ -14,13 +14,13 @@ import java.sql.Statement;
 // Extend HttpServlet class
 public class test extends HttpServlet {
  
-   private String message;
+   //private String message;
    public static Connection connection = null;
 
-   public void init() throws ServletException {
+   //public void init() throws ServletException {
       // Do required initialization
-      message = "Hello World";
-   }
+   //   message = "Hello World";
+   //}
 
 
    public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -33,8 +33,19 @@ public class test extends HttpServlet {
 	JSONObject result = new JSONObject();
 	try{
 		if(flag&&input.equals("/api-create")){
-			result.put("result",input);
-			result.write(response.getWriter());
+			Class.forName("org.sqlite.JDBC");
+			connection = DriverManager.getConnection("jdbc:sqlite:/tmp/surl.db");
+			Statement statement = null;
+			statement = connection.createStatement();
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS UrlMapping(url text, surl text, PRIMARY KEY(url));");
+			String SelectSQL = "select * from UrlMapping;";
+			ResultSet rs = statement.executeQuery(SelectSQL);
+			while(rs.next()){
+				response.getWriter().print(rs.getString("url"));
+			}
+			//result.put("result",url);
+			//result.write(response.getWriter());
+			response.getWriter().print(url);
 		}
 		else{
 			response.setStatus(HttpServletResponse.SC_FOUND);//302
