@@ -61,14 +61,21 @@ $ sh a.sh
   - 第二部分 : 縮網址處理
   - 第三部分 : 將縮網址導向正確URL
 ### 第一部分
-- 判定URL是否有url這個參數 (本專案使用 request.getParameter("url");)
+- 判定URL是否有url這個參數 (本專案使用 request.getParameter("url"))
 - 若沒有url參數, 可判定此行為是要將縮網址導向URL (進入第三部分)
-- 若有url參數, 我們要取得正確的url值
+- 若有url參數, 我們要取得正確的url(長網址)值
   - 不可直接使用request.getParameter("url")所得到的值, 否則有帶其他參數的網址會出現錯誤
     - ex : https://www.google.com/search?client=ubuntu&channel=fs&q=群暉科技&ie=utf-8&oe=utf-8
-  - 本專案使用 request.getQueryString(), 再進行
+  - 本專案使用 request.getQueryString, 再進行字串處理, 得到正確的長網址
+- PathInfo 為 api-create, 則可進入第二部分
 ### 第二部分
+- 先判定長網址是否已經在database table中, 有的話直接回傳對應的短網址
+- 若長網址沒出現在db table中, 則將table中所有短網址讀入set (為了判定是否產生重複短網址)
+- 亂數產生8個英文或數字作為短網址, 若不幸出現在短網址set中, 則重新產生
+- 將長網址與對應的亂數紀錄進db table
+- 回傳使用者短網址資訊 : http://web-server-ip:web-server-port/短網址亂數
 ### 第三部分
+
 ## 專案特色
 - 相同網址多次呼叫API, 回傳的短網址相同
 - 短網址在server IP後面由8個英文數字組合, 因為人的[短期記憶](https://zh.wikipedia.org/wiki/%E7%9F%AD%E6%9C%9F%E8%AE%B0%E5%BF%86)常常參考的數字是7 ± 2 個元素
