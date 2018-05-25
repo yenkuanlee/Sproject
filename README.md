@@ -28,6 +28,32 @@ Sproject是一個縮網址專案, 使用者可透過瀏覽器或是curl呼叫API
     - servlet-api.jar
     - sqlite.jar
 
+## 環境
+### 環境建置
+- Java 8 或以上版本
+- tomcat 7 或以上版本, 假設安裝於 /opt/tomcat7
+- 專案部署
+```
+$ git clone https://github.com/yenkuanlee/Sproject
+$ cd Sproject
+$ sudo cp web.xml /opt/tomcat7/webapps/ROOT/WEB-INF
+$ sh a.sh
+  # 編譯 URLShortening.java
+  # 將 URLShortening.class 搬移至tomcat classes目錄
+  # 重啟 tomcat
+```
+### Docker
+為了快速完成此專案, 可使用既有的Docker環境進行開發 (此專案中提供Dockerfile為可開發環境, 但包含其他專案所需套件, 故image較大, 故僅供參考)
+```
+$ docker pull yenkuanlee/mcu:latest
+$ docker run -dti -p 8787:8080 yenkuanlee/mcu /bin/sh
+$ docker exec -ti $CONTAINER_ID bash
+$ cd
+$ git clone https://github.com/yenkuanlee/Sproject
+$ cd Sproject
+$ sudo cp web.xml /opt/tomcat7/webapps/ROOT/WEB-INF
+$ sh a.sh
+```
 ## 演算法邏輯
 
 ## Reference
