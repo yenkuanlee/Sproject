@@ -40,12 +40,12 @@
   </description>
 
 <servlet>
-   <servlet-name>test</servlet-name>
-   <servlet-class>test</servlet-class>
+   <servlet-name>URLShortening</servlet-name>
+   <servlet-class>URLShortening</servlet-class>
 </servlet>
 
 <servlet-mapping>
-   <servlet-name>test</servlet-name>
+   <servlet-name>URLShortening</servlet-name>
    <url-pattern>/*</url-pattern>
 </servlet-mapping>
 

@@ -12,7 +12,7 @@ import java.sql.Statement;
 import java.util.Random;
 import java.util.HashSet;
 // Extend HttpServlet class
-public class test extends HttpServlet {
+public class URLShortening extends HttpServlet {
 	public static Connection connection = null;
 
 	public static String getSaltString() {
