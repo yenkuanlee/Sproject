@@ -4,28 +4,18 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import org.json.JSONObject;
 import org.json.JSONArray;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import java.util.Random;
 import java.util.HashSet;
-
 // Extend HttpServlet class
 public class test extends HttpServlet {
- 
-   //private String message;
-   public static Connection connection = null;
+	public static Connection connection = null;
 
-   //public void init() throws ServletException {
-      // Do required initialization
-   //   message = "Hello World";
-   //}
-
-  public static String getSaltString() {
+	public static String getSaltString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
         StringBuilder salt = new StringBuilder();
         Random rnd = new Random();
@@ -37,15 +27,19 @@ public class test extends HttpServlet {
         return saltStr;
     }
 
-
-   public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 	String input = request.getPathInfo() ;
 	String url = request.getParameter("url");
-	boolean flag = url==null?false:true;
+	String UrlQuery = request.getQueryString();
+	String CheckString = url==null?"ERROR":UrlQuery.substring(0,4); // to avoid some bad word in user url
+	boolean flag = false; // default no url
+	if(CheckString.equals("url=")){
+		flag = true;
+		url = UrlQuery.substring(4);
+	}
 
-	JSONObject result = new JSONObject();
 	try{
 		if(flag&&input.equals("/api-create")){
 			Class.forName("org.sqlite.JDBC");
@@ -59,33 +53,38 @@ public class test extends HttpServlet {
 			while(rs.next()){
 				surl = rs.getString("surl");
 			}
-			//result.put("result",url);
-			//result.write(response.getWriter());
 			if(surl.equals("init")){ // db have no this url
 				surl = getSaltString();
-			}
-			HashSet<String> SurlSet = new HashSet<String>();
-			SelectSQL = "SELECT surl FROM UrlMapping;";
-			rs = statement.executeQuery(SelectSQL);
-			while(rs.next()){
-				SurlSet.add(rs.getString("surl"));
-			}
-			while(true){
-				if(SurlSet.contains(surl)){
-					surl = getSaltString();
+				HashSet<String> SurlSet = new HashSet<String>();
+				SelectSQL = "SELECT surl FROM UrlMapping;";
+				rs = statement.executeQuery(SelectSQL);
+				while(rs.next()){
+					SurlSet.add(rs.getString("surl"));
 				}
-				else
-					break;
+				while(true){
+					if(SurlSet.contains(surl)){
+						surl = getSaltString();
+					}
+					else
+						break;
 			}
-			statement.executeUpdate("INSERT INTO UrlMapping VALUES('"+url+"','"+surl+"');");
-			
-			response.getWriter().println(input);
-			response.getWriter().println(url);
-			response.getWriter().println(surl);
+				statement.executeUpdate("INSERT INTO UrlMapping VALUES('"+url+"','"+surl+"');");
+			}
+			response.getWriter().println("http://140.92.143.82:8787/"+surl);
 		}
-		else{
+		else{ // no url param, have to redirect
+			Class.forName("org.sqlite.JDBC");
+			connection = DriverManager.getConnection("jdbc:sqlite:/tmp/surl.db");
+                        Statement statement = null;
+                        statement = connection.createStatement();
+                        String SelectSQL = "SELECT url FROM UrlMapping WHERE surl = '"+input.substring(1)+"';"; // substring to remove slash
+                        ResultSet rs = statement.executeQuery(SelectSQL);
+			String output = "init";
+			while(rs.next()){
+                                output = rs.getString("url");
+                        }
 			response.setStatus(HttpServletResponse.SC_FOUND);//302
-			response.setHeader("Location", "http://google.com");
+			response.setHeader("Location", output);
 		}
 	}catch(Exception e){}
    }
