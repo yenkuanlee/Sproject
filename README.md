@@ -31,3 +31,7 @@ Sproject是一個縮網址專案, 使用者可透過瀏覽器或是curl呼叫API
 ## 演算法邏輯
 
 ## Reference
+- [Random String Generation](https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string)
+- [Java Servlet 文件](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/http/HttpServletRequest.html)
+- [Tomcat web.xml 設定](https://mail-archives.apache.org/mod_mbox/tomcat-users/200605.mbox/%3C446C4F87.3030901@joedog.org%3E)
+- [URL redirect in Java](https://www.logicbig.com/tutorials/java-ee-tutorial/java-servlet/servlet-redirect.html)
