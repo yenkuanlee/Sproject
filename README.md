@@ -55,7 +55,14 @@ $ sudo cp web.xml /opt/tomcat7/webapps/ROOT/WEB-INF
 $ sh a.sh
 ```
 ## 演算法邏輯
-
+本專案主程式為 URLShortening.java, 大致上可分成三部分
+  - 第一部分 : 判斷API行為, 是要進行縮網址, 抑或是要將已縮的網址導向正確的URL
+  - 第二部分 : 縮網址處理
+  - 第三部分 : 將縮網址導向正確URL
+## 專案特色
+- 相同網址多次呼叫API, 回傳的短網址相同
+- 短網址在server IP後面由8個英文數字組合, 因為人的[短期記憶](https://zh.wikipedia.org/wiki/%E7%9F%AD%E6%9C%9F%E8%AE%B0%E5%BF%86)常常參考的數字是7 ± 2 個元素
+- 考量到開發速度, 使用sqlite紀錄url與對應的短網址, 若考慮到大量使用者應使用其他適合的資料庫
 ## Reference
 - [Random String Generation](https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string)
 - [Java Servlet 文件](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/http/HttpServletRequest.html)
