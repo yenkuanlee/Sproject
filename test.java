@@ -11,6 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import java.util.Random;
+import java.util.HashSet;
+
 // Extend HttpServlet class
 public class test extends HttpServlet {
  
@@ -21,6 +24,18 @@ public class test extends HttpServlet {
       // Do required initialization
    //   message = "Hello World";
    //}
+
+  public static String getSaltString() {
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 8) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        return saltStr;
+    }
 
 
    public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -38,14 +53,35 @@ public class test extends HttpServlet {
 			Statement statement = null;
 			statement = connection.createStatement();
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS UrlMapping(url text, surl text, PRIMARY KEY(url));");
-			String SelectSQL = "select * from UrlMapping;";
+			String SelectSQL = "SELECT surl FROM UrlMapping WHERE url='"+url+"';";
 			ResultSet rs = statement.executeQuery(SelectSQL);
+			String surl = "init";
 			while(rs.next()){
-				response.getWriter().print(rs.getString("url"));
+				surl = rs.getString("surl");
 			}
 			//result.put("result",url);
 			//result.write(response.getWriter());
-			response.getWriter().print(url);
+			if(surl.equals("init")){ // db have no this url
+				surl = getSaltString();
+			}
+			HashSet<String> SurlSet = new HashSet<String>();
+			SelectSQL = "SELECT surl FROM UrlMapping;";
+			rs = statement.executeQuery(SelectSQL);
+			while(rs.next()){
+				SurlSet.add(rs.getString("surl"));
+			}
+			while(true){
+				if(SurlSet.contains(surl)){
+					surl = getSaltString();
+				}
+				else
+					break;
+			}
+			statement.executeUpdate("INSERT INTO UrlMapping VALUES('"+url+"','"+surl+"');");
+			
+			response.getWriter().println(input);
+			response.getWriter().println(url);
+			response.getWriter().println(surl);
 		}
 		else{
 			response.setStatus(HttpServletResponse.SC_FOUND);//302
